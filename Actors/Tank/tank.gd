@@ -5,19 +5,22 @@ const RAY_CAST_LENGTH = 8
 const TILE_SIZE = 16
 
 enum Orientation { 
-	VERTICAL, 
-	HORIZONTAL 
+	NORTH,
+	SOUTH,
+	EAST,
+	WEST
 }
 
 enum State {
 	IDLE,
-	MOVING
+	MOVING,
+	TURNING
 }
 
 @onready var animation_player = $AnimationPlayer
 @onready var ray_cast = $RayCast2D
 @onready var destination_tile = global_position
-@onready var orientation = Orientation.VERTICAL
+@onready var orientation = Orientation.NORTH
 @onready var state = State.IDLE
 
 func _ready() -> void:
@@ -36,72 +39,119 @@ func get_movement_vector() -> Vector2:
 func _process(_delta: float) -> void:
 	if state == State.IDLE:
 		state = handle_idle_state()
-	else:
+	elif state == State.MOVING:
 		state = handle_moving_state()
 		if state == State.IDLE:
 			animation_player.pause()
+	elif state == State.TURNING:
+		var movement_vector = get_movement_vector()
+		if movement_vector == Vector2.ZERO:
+			state = State.IDLE
+
+
+func move_forward() -> void:
+	if orientation == Orientation.NORTH:
+		animation_player.play("movingNorth")
+		if destination_open(Vector2.UP):
+			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE)
+			velocity = Vector2(0, -SPEED)
+	elif orientation == Orientation.SOUTH:
+		animation_player.play("movingSouth")
+		if destination_open(Vector2.DOWN):
+			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE)
+			velocity = Vector2(0, SPEED)
+	elif orientation == Orientation.EAST:
+		animation_player.play("movingEast")
+		if destination_open(Vector2.RIGHT):
+			destination_tile = Vector2(global_position.x + TILE_SIZE, global_position.y)
+			velocity = Vector2(SPEED, 0)
+	else:
+		animation_player.play("movingWest")
+		if destination_open(Vector2.LEFT):
+			destination_tile = Vector2(global_position.x - TILE_SIZE, global_position.y)
+			velocity = Vector2(-SPEED, 0)
+
+
+func move_backward() -> void:
+	if orientation == Orientation.NORTH:
+		animation_player.play("movingSouth")
+		if destination_open(Vector2.DOWN):
+			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE)
+			velocity = Vector2(0, SPEED)
+	elif orientation == Orientation.SOUTH:
+		animation_player.play("movingNorth")
+		if destination_open(Vector2.UP):
+			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE)
+			velocity = Vector2(0, -SPEED)
+	elif orientation == Orientation.EAST:
+		animation_player.play("movingWest")
+		if destination_open(Vector2.LEFT):
+			destination_tile = Vector2(global_position.x - TILE_SIZE, global_position.y)
+			velocity = Vector2(-SPEED, 0)
+	else:
+		animation_player.play("movingEast")
+		if destination_open(Vector2.RIGHT):
+			destination_tile = Vector2(global_position.x + TILE_SIZE, global_position.y)
+			velocity = Vector2(SPEED, 0)
+
+
+func rotate_left() -> void:
+	if orientation == Orientation.NORTH:
+		animation_player.play("movingWest")
+		orientation = Orientation.WEST
+		ray_cast.target_position = Vector2.LEFT * RAY_CAST_LENGTH
+	elif orientation == Orientation.SOUTH:
+		animation_player.play("movingEast")
+		orientation = Orientation.EAST
+		ray_cast.target_position = Vector2.RIGHT * RAY_CAST_LENGTH
+	elif orientation == Orientation.EAST:
+		animation_player.play("movingNorth")
+		orientation = Orientation.NORTH
+		ray_cast.target_position = Vector2.UP * RAY_CAST_LENGTH
+	else:
+		animation_player.play("movingSouth")
+		orientation = Orientation.SOUTH
+		ray_cast.target_position = Vector2.DOWN * RAY_CAST_LENGTH
+	animation_player.seek(0.0, true)
+	animation_player.pause()
+
+
+func rotate_right() -> void:
+	if orientation == Orientation.NORTH:
+		animation_player.play("movingEast")
+		orientation = Orientation.EAST
+		ray_cast.target_position = Vector2.RIGHT * RAY_CAST_LENGTH
+	elif orientation == Orientation.SOUTH:
+		animation_player.play("movingWest")
+		orientation = Orientation.WEST
+		ray_cast.target_position = Vector2.LEFT * RAY_CAST_LENGTH
+	elif orientation == Orientation.EAST:
+		animation_player.play("movingSouth")
+		orientation = Orientation.SOUTH
+		ray_cast.target_position = Vector2.DOWN * RAY_CAST_LENGTH
+	else:
+		animation_player.play("movingNorth")
+		orientation = Orientation.NORTH
+		ray_cast.target_position = Vector2.UP * RAY_CAST_LENGTH
+	animation_player.seek(0.0, true)
+	animation_player.pause()
 
 
 func handle_idle_state() -> State:
 	var movement_vector = get_movement_vector()
 	if movement_vector == Vector2.UP:
-		animation_player.play("movingNorth")
-		if orientation == Orientation.HORIZONTAL:
-			animation_player.pause()
-			orientation = Orientation.VERTICAL
-			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
-			return State.IDLE
-		elif destination_open(movement_vector):
-			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE)
-			velocity = Vector2(0, -SPEED)
-			return State.MOVING
-		else:
-			animation_player.pause()
-			return State.IDLE
+		move_forward()
+		return State.MOVING
 	elif movement_vector == Vector2.DOWN:
-		animation_player.play("movingSouth")
-		if orientation == Orientation.HORIZONTAL:
-			animation_player.pause()
-			orientation = Orientation.VERTICAL
-			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
-			return State.IDLE
-		elif destination_open(movement_vector):
-			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE)
-			velocity = Vector2(0, SPEED)
-			return State.MOVING
-		else:
-			animation_player.pause()
-			return State.IDLE
+		move_backward()
+		return State.MOVING
 	elif movement_vector == Vector2.LEFT:
-		animation_player.play("movingWest")
-		if orientation == Orientation.VERTICAL:
-			animation_player.pause()
-			orientation = Orientation.HORIZONTAL
-			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
-			return State.IDLE
-		elif destination_open(movement_vector):
-			destination_tile = Vector2(global_position.x - TILE_SIZE, global_position.y)
-			velocity = Vector2(-SPEED, 0)
-			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
-			return State.MOVING
-		else:
-			animation_player.pause()
-			return State.IDLE
+		rotate_left()
+		return State.TURNING
 	elif movement_vector == Vector2.RIGHT:
-		animation_player.play("movingEast")
-		if orientation == Orientation.VERTICAL:
-			animation_player.pause()
-			orientation = Orientation.HORIZONTAL
-			return State.IDLE
-		elif destination_open(movement_vector):
-			destination_tile = Vector2(global_position.x + TILE_SIZE, global_position.y)
-			velocity = Vector2(SPEED, 0)
-			return State.MOVING
-		else:
-			animation_player.pause()
-			return State.IDLE
-	else:
-		return State.IDLE
+		rotate_right()
+		return State.TURNING
+	return State.IDLE
 
 
 func destination_open(movement_vector: Vector2) -> bool:
