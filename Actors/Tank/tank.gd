@@ -16,7 +16,7 @@ enum State {
 
 @onready var animation_player = $AnimationPlayer
 @onready var ray_cast = $RayCast2D
-@onready var destination_tile = Vector2i(4, 6)
+@onready var destination_tile = global_position
 @onready var orientation = Orientation.VERTICAL
 @onready var state = State.IDLE
 
@@ -52,8 +52,7 @@ func handle_idle_state() -> State:
 			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
-			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE + 1)
-			destination_tile.y -= 1
+			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE)
 			velocity = Vector2(0, -SPEED)
 			return State.MOVING
 		else:
@@ -67,8 +66,7 @@ func handle_idle_state() -> State:
 			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
-			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE - 1)
-			destination_tile.y += 1
+			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE)
 			velocity = Vector2(0, SPEED)
 			return State.MOVING
 		else:
@@ -82,7 +80,7 @@ func handle_idle_state() -> State:
 			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
-			destination_tile = Vector2(global_position.x - TILE_SIZE - 1, global_position.y)
+			destination_tile = Vector2(global_position.x - TILE_SIZE, global_position.y)
 			velocity = Vector2(-SPEED, 0)
 			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.MOVING
@@ -96,7 +94,7 @@ func handle_idle_state() -> State:
 			orientation = Orientation.HORIZONTAL
 			return State.IDLE
 		elif destination_open(movement_vector):
-			destination_tile = Vector2(global_position.x + TILE_SIZE + 1, global_position.y)
+			destination_tile = Vector2(global_position.x + TILE_SIZE, global_position.y)
 			velocity = Vector2(SPEED, 0)
 			return State.MOVING
 		else:
