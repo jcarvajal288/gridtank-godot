@@ -52,6 +52,7 @@ func handle_idle_state() -> State:
 			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
+			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE + 1)
 			destination_tile.y -= 1
 			velocity = Vector2(0, -SPEED)
 			return State.MOVING
@@ -66,6 +67,7 @@ func handle_idle_state() -> State:
 			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
+			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE - 1)
 			destination_tile.y += 1
 			velocity = Vector2(0, SPEED)
 			return State.MOVING
@@ -80,7 +82,7 @@ func handle_idle_state() -> State:
 			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
-			destination_tile.x -= 1
+			destination_tile = Vector2(global_position.x - TILE_SIZE - 1, global_position.y)
 			velocity = Vector2(-SPEED, 0)
 			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.MOVING
@@ -94,7 +96,7 @@ func handle_idle_state() -> State:
 			orientation = Orientation.HORIZONTAL
 			return State.IDLE
 		elif destination_open(movement_vector):
-			destination_tile.x += 1
+			destination_tile = Vector2(global_position.x + TILE_SIZE + 1, global_position.y)
 			velocity = Vector2(SPEED, 0)
 			return State.MOVING
 		else:
@@ -111,6 +113,7 @@ func destination_open(movement_vector: Vector2) -> bool:
 
 func handle_moving_state() -> State:
 	if reached_destination():
+		global_position = destination_tile
 		return State.IDLE
 	elif ray_cast.is_colliding():
 		return State.IDLE
@@ -121,19 +124,13 @@ func handle_moving_state() -> State:
 
 func reached_destination() -> bool:
 	var direction = animation_player.current_animation
-	var target_x = destination_tile.x * TILE_SIZE + 8
-	var target_y = destination_tile.y * TILE_SIZE + 8
-	if direction == "movingNorth" and global_position.y <= target_y:
-		global_position = Vector2(target_x, target_y)
+	if direction == "movingNorth" and global_position.y <= destination_tile.y:
 		return true
-	elif direction == "movingSouth" and global_position.y >= target_y:
-		global_position = Vector2(target_x, target_y)
+	elif direction == "movingSouth" and global_position.y >= destination_tile.y:
 		return true
-	elif direction == "movingEast" and global_position.x >= target_x:
-		global_position = Vector2(target_x, target_y)
+	elif direction == "movingEast" and global_position.x >= destination_tile.x:
 		return true
-	elif direction == "movingWest" and global_position.x <= target_x:
-		global_position = Vector2(target_x, target_y)
+	elif direction == "movingWest" and global_position.x <= destination_tile.x:
 		return true
 	else: 
 		return false
