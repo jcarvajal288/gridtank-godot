@@ -175,3 +175,6 @@ autoplay = &"movingNorth"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1749262914]
 shape = SubResource("CircleShape2D_fuhmt")
+
+[node name="RayCast2D" type="RayCast2D" parent="." unique_id=1592576604]
+target_position = Vector2(0, -16)

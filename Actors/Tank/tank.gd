@@ -13,6 +13,7 @@ enum State {
 }
 
 @onready var animation_player = $AnimationPlayer
+@onready var ray_cast = $RayCast2D
 @onready var destination_tile = Vector2i(4, 6)
 @onready var orientation = Orientation.VERTICAL
 @onready var state = State.IDLE
@@ -47,43 +48,60 @@ func handle_idle_state() -> State:
 			animation_player.pause()
 			orientation = Orientation.VERTICAL
 			return State.IDLE
-		else:
+		elif destination_open(movement_vector):
 			destination_tile.y -= 1
 			velocity = Vector2(0, -SPEED)
 			return State.MOVING
+		else:
+			animation_player.pause()
+			return State.IDLE
 	elif movement_vector == Vector2.DOWN:
 		animation_player.play("movingSouth")
 		if orientation == Orientation.HORIZONTAL:
 			animation_player.pause()
 			orientation = Orientation.VERTICAL
 			return State.IDLE
-		else:
+		elif destination_open(movement_vector):
 			destination_tile.y += 1
 			velocity = Vector2(0, SPEED)
 			return State.MOVING
+		else:
+			animation_player.pause()
+			return State.IDLE
 	elif movement_vector == Vector2.LEFT:
 		animation_player.play("movingWest")
 		if orientation == Orientation.VERTICAL:
 			animation_player.pause()
 			orientation = Orientation.HORIZONTAL
 			return State.IDLE
-		else:
+		elif destination_open(movement_vector):
 			destination_tile.x -= 1
 			velocity = Vector2(-SPEED, 0)
 			return State.MOVING
+		else:
+			animation_player.pause()
+			return State.IDLE
 	elif movement_vector == Vector2.RIGHT:
 		animation_player.play("movingEast")
 		if orientation == Orientation.VERTICAL:
 			animation_player.pause()
 			orientation = Orientation.HORIZONTAL
 			return State.IDLE
-		else:
+		elif destination_open(movement_vector):
 			destination_tile.x += 1
 			velocity = Vector2(SPEED, 0)
 			return State.MOVING
+		else:
+			animation_player.pause()
+			return State.IDLE
 	else:
 		return State.IDLE
-	
+
+
+func destination_open(movement_vector: Vector2) -> bool:
+	ray_cast.target_position = movement_vector * 16	
+	return not ray_cast.is_colliding()
+
 
 func handle_moving_state() -> State:
 	if reached_destination():
