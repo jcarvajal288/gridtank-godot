@@ -74,22 +74,22 @@ func move_forward() -> void:
 
 func move_backward() -> void:
 	if orientation == Orientation.NORTH:
-		animation_player.play("movingSouth")
+		animation_player.play_backwards("movingNorth")
 		if destination_open(Vector2.DOWN):
 			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE)
 			velocity = Vector2(0, SPEED)
 	elif orientation == Orientation.SOUTH:
-		animation_player.play("movingNorth")
+		animation_player.play_backwards("movingSouth")
 		if destination_open(Vector2.UP):
 			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE)
 			velocity = Vector2(0, -SPEED)
 	elif orientation == Orientation.EAST:
-		animation_player.play("movingWest")
+		animation_player.play_backwards("movingEast")
 		if destination_open(Vector2.LEFT):
 			destination_tile = Vector2(global_position.x - TILE_SIZE, global_position.y)
 			velocity = Vector2(-SPEED, 0)
 	else:
-		animation_player.play("movingEast")
+		animation_player.play_backwards("movingWest")
 		if destination_open(Vector2.RIGHT):
 			destination_tile = Vector2(global_position.x + TILE_SIZE, global_position.y)
 			velocity = Vector2(SPEED, 0)
@@ -171,14 +171,13 @@ func handle_moving_state() -> State:
 	
 
 func reached_destination() -> bool:
-	var direction = animation_player.current_animation
-	if direction == "movingNorth" and global_position.y <= destination_tile.y:
+	if velocity.y < 0 and global_position.y <= destination_tile.y:
 		return true
-	elif direction == "movingSouth" and global_position.y >= destination_tile.y:
+	elif velocity.y > 0 and global_position.y >= destination_tile.y:
 		return true
-	elif direction == "movingEast" and global_position.x >= destination_tile.x:
+	elif velocity.x > 0 and global_position.x >= destination_tile.x:
 		return true
-	elif direction == "movingWest" and global_position.x <= destination_tile.x:
+	elif velocity.x < 0 and global_position.x <= destination_tile.x:
 		return true
 	else: 
 		return false
