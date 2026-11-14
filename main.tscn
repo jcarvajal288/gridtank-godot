@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://swh5wjtscoq4" path="res://Levels/TestLevel/TestLevel.tscn" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://5yge46m350vh" path="res://Actors/Tank/Tank.tscn" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://xgh2kmpxm8nr" path="res://UI/StatusBar/StatusBar.tscn" id="3_h2yge"]
 
 [node name="Main" type="Node2D" unique_id=516220782]
 
@@ -9,3 +10,7 @@
 
 [node name="Tank" parent="." unique_id=346400834 instance=ExtResource("2_0xm2m")]
 position = Vector2(72, 104)
+
+[node name="StatusBar" parent="." unique_id=1227440018 instance=ExtResource("3_h2yge")]
+offset = Vector2(151.85, 71.55)
+transform = Transform2D(1, 0, 0, 1, 151.85, 71.55)

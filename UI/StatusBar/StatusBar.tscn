@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://xgh2kmpxm8nr"]
+
+[ext_resource type="Texture2D" uid="uid://bk7mrsvi62gpv" path="res://art/status_bar.png" id="1_k6gla"]
+
+[node name="StatusBar" type="CanvasLayer" unique_id=1227440018]
+
+[node name="Control" type="Control" parent="." unique_id=1813763773]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 16.0
+offset_bottom = 144.0
+
+[node name="Sprite2D" type="Sprite2D" parent="Control" unique_id=1771813988]
+texture = ExtResource("1_k6gla")
