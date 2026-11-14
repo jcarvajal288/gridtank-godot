@@ -35,7 +35,7 @@ tracks/1/keys = {
 resource_name = "movingEast"
 length = 0.4000100059606135
 loop_mode = 1
-step = 0.1
+step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -65,7 +65,7 @@ tracks/1/keys = {
 resource_name = "movingNorth"
 length = 0.4000100059606135
 loop_mode = 1
-step = 0.1
+step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -95,7 +95,7 @@ tracks/1/keys = {
 resource_name = "movingSouth"
 length = 0.4000100059606135
 loop_mode = 1
-step = 0.1
+step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -173,6 +173,7 @@ hframes = 4
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=206972970]
 libraries/ = SubResource("AnimationLibrary_svj02")
 autoplay = &"movingNorth"
+speed_scale = 3.0
 
 [node name="TurretSprite" type="Sprite2D" parent="." unique_id=665755750]
 texture = ExtResource("3_cgv7i")
