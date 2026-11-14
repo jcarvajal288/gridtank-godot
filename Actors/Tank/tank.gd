@@ -1,6 +1,8 @@
 class_name Tank extends CharacterBody2D
 
 const SPEED = 40
+const RAY_CAST_LENGTH = 8
+const TILE_SIZE = 16
 
 enum Orientation { 
 	VERTICAL, 
@@ -47,6 +49,7 @@ func handle_idle_state() -> State:
 		if orientation == Orientation.HORIZONTAL:
 			animation_player.pause()
 			orientation = Orientation.VERTICAL
+			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
 			destination_tile.y -= 1
@@ -60,6 +63,7 @@ func handle_idle_state() -> State:
 		if orientation == Orientation.HORIZONTAL:
 			animation_player.pause()
 			orientation = Orientation.VERTICAL
+			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
 			destination_tile.y += 1
@@ -73,10 +77,12 @@ func handle_idle_state() -> State:
 		if orientation == Orientation.VERTICAL:
 			animation_player.pause()
 			orientation = Orientation.HORIZONTAL
+			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.IDLE
 		elif destination_open(movement_vector):
 			destination_tile.x -= 1
 			velocity = Vector2(-SPEED, 0)
+			ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 			return State.MOVING
 		else:
 			animation_player.pause()
@@ -99,12 +105,14 @@ func handle_idle_state() -> State:
 
 
 func destination_open(movement_vector: Vector2) -> bool:
-	ray_cast.target_position = movement_vector * 16	
+	ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
 	return not ray_cast.is_colliding()
 
 
 func handle_moving_state() -> State:
 	if reached_destination():
+		return State.IDLE
+	elif ray_cast.is_colliding():
 		return State.IDLE
 	else:
 		move_and_slide()
@@ -113,8 +121,8 @@ func handle_moving_state() -> State:
 
 func reached_destination() -> bool:
 	var direction = animation_player.current_animation
-	var target_x = destination_tile.x * 16 + 8
-	var target_y = destination_tile.y * 16 + 8
+	var target_x = destination_tile.x * TILE_SIZE + 8
+	var target_y = destination_tile.y * TILE_SIZE + 8
 	if direction == "movingNorth" and global_position.y <= target_y:
 		global_position = Vector2(target_x, target_y)
 		return true
