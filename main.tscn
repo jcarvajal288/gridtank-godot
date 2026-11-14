@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://df6gwf3cdvhmw"]
+
+[ext_resource type="PackedScene" uid="uid://swh5wjtscoq4" path="res://Levels/TestLevel/TestLevel.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://5yge46m350vh" path="res://Actors/Tank/Tank.tscn" id="2_0xm2m"]
+
+[node name="Main" type="Node2D" unique_id=516220782]
+
+[node name="TestLevel" parent="." unique_id=170532811 instance=ExtResource("1_ig7tw")]
+
+[node name="Tank" parent="." unique_id=346400834 instance=ExtResource("2_0xm2m")]
+position = Vector2(72, 104)
