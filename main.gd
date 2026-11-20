@@ -9,7 +9,6 @@ func _ready() -> void:
 		
 
 func trigger_enemy_updates() -> void:
-	for enemy in $Enemies.get_children():
-		enemy.trigger_update(tick_count)
 	tick_count += 1
 	tick_count %= TICKS_PER_CYCLE
+	Global.trigger_update.emit(tick_count)

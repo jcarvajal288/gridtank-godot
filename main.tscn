@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://swh5wjtscoq4" path="res://Levels/TestLevel/TestLevel.tscn" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://5yge46m350vh" path="res://Actors/Tank/Tank.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cyfc1pkd45ea2" path="res://Actors/EnemyTurret/EnemyTurret.tscn" id="4_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://7fbiitahhigd" path="res://EnemyPatterns/RotateInPlace/RotateInPlace.tscn" id="5_lquwl"]
 
 [node name="Main" type="Node2D" unique_id=516220782]
 script = ExtResource("1_h2yge")
@@ -20,3 +21,6 @@ autostart = true
 
 [node name="EnemyTurret" parent="Enemies" unique_id=1403130778 instance=ExtResource("4_1bvp3")]
 position = Vector2(88, 72)
+
+[node name="RotateInPlace" parent="Enemies/EnemyTurret" unique_id=877590384 node_paths=PackedStringArray("subject") instance=ExtResource("5_lquwl")]
+subject = NodePath("..")

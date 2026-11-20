@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://7fbiitahhigd"]
+
+[ext_resource type="Script" uid="uid://dlfcpmbgptoo6" path="res://EnemyPatterns/RotateInPlace/rotate_in_place.gd" id="1_wjq8n"]
+
+[node name="RotateInPlace" type="Node" unique_id=292366317]
+script = ExtResource("1_wjq8n")
