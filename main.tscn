@@ -23,4 +23,5 @@ autostart = true
 position = Vector2(88, 72)
 
 [node name="RotateInPlace" parent="Enemies/EnemyTurret" unique_id=877590384 node_paths=PackedStringArray("subject") instance=ExtResource("5_lquwl")]
+directions = Array[int]([0, 0, 2, 2, 1, 1, 3, 3])
 subject = NodePath("..")

@@ -4,13 +4,6 @@ const SPEED = 40
 const RAY_CAST_LENGTH = 8
 const TILE_SIZE = 16
 
-enum Orientation { 
-	NORTH,
-	SOUTH,
-	EAST,
-	WEST
-}
-
 enum State {
 	IDLE,
 	MOVING,
@@ -22,8 +15,8 @@ enum State {
 @onready var turret_sprite = $TurretSprite
 
 @onready var destination_tile = global_position
-@onready var body_orientation = Orientation.NORTH
-@onready var turret_orientation = Orientation.NORTH
+@onready var body_orientation = Global.Orientation.NORTH
+@onready var turret_orientation = Global.Orientation.NORTH
 @onready var state = State.IDLE
 
 func _ready() -> void:
@@ -77,17 +70,17 @@ func handle_idle_state(movement_vector: Vector2) -> State:
 
 
 func move_forward() -> void:
-	if body_orientation == Orientation.NORTH:
+	if body_orientation == Global.Orientation.NORTH:
 		animation_player.play("movingNorth")
 		if destination_open(Vector2.UP):
 			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE)
 			velocity = Vector2(0, -SPEED)
-	elif body_orientation == Orientation.SOUTH:
+	elif body_orientation == Global.Orientation.SOUTH:
 		animation_player.play("movingSouth")
 		if destination_open(Vector2.DOWN):
 			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE)
 			velocity = Vector2(0, SPEED)
-	elif body_orientation == Orientation.EAST:
+	elif body_orientation == Global.Orientation.EAST:
 		animation_player.play("movingEast")
 		if destination_open(Vector2.RIGHT):
 			destination_tile = Vector2(global_position.x + TILE_SIZE, global_position.y)
@@ -100,17 +93,17 @@ func move_forward() -> void:
 
 
 func move_backward() -> void:
-	if body_orientation == Orientation.NORTH:
+	if body_orientation == Global.Orientation.NORTH:
 		animation_player.play_backwards("movingNorth")
 		if destination_open(Vector2.DOWN):
 			destination_tile = Vector2(global_position.x, global_position.y + TILE_SIZE)
 			velocity = Vector2(0, SPEED)
-	elif body_orientation == Orientation.SOUTH:
+	elif body_orientation == Global.Orientation.SOUTH:
 		animation_player.play_backwards("movingSouth")
 		if destination_open(Vector2.UP):
 			destination_tile = Vector2(global_position.x, global_position.y - TILE_SIZE)
 			velocity = Vector2(0, -SPEED)
-	elif body_orientation == Orientation.EAST:
+	elif body_orientation == Global.Orientation.EAST:
 		animation_player.play_backwards("movingEast")
 		if destination_open(Vector2.LEFT):
 			destination_tile = Vector2(global_position.x - TILE_SIZE, global_position.y)
@@ -123,21 +116,21 @@ func move_backward() -> void:
 
 
 func rotate_left() -> void:
-	if body_orientation == Orientation.NORTH:
+	if body_orientation == Global.Orientation.NORTH:
 		animation_player.play("movingWest")
-		body_orientation = Orientation.WEST
+		body_orientation = Global.Orientation.WEST
 		ray_cast.target_position = Vector2.LEFT * RAY_CAST_LENGTH
-	elif body_orientation == Orientation.SOUTH:
+	elif body_orientation == Global.Orientation.SOUTH:
 		animation_player.play("movingEast")
-		body_orientation = Orientation.EAST
+		body_orientation = Global.Orientation.EAST
 		ray_cast.target_position = Vector2.RIGHT * RAY_CAST_LENGTH
-	elif body_orientation == Orientation.EAST:
+	elif body_orientation == Global.Orientation.EAST:
 		animation_player.play("movingNorth")
-		body_orientation = Orientation.NORTH
+		body_orientation = Global.Orientation.NORTH
 		ray_cast.target_position = Vector2.UP * RAY_CAST_LENGTH
 	else:
 		animation_player.play("movingSouth")
-		body_orientation = Orientation.SOUTH
+		body_orientation = Global.Orientation.SOUTH
 		ray_cast.target_position = Vector2.DOWN * RAY_CAST_LENGTH
 	animation_player.seek(0.0, true)
 	animation_player.pause()
@@ -145,21 +138,21 @@ func rotate_left() -> void:
 
 
 func rotate_right() -> void:
-	if body_orientation == Orientation.NORTH:
+	if body_orientation == Global.Orientation.NORTH:
 		animation_player.play("movingEast")
-		body_orientation = Orientation.EAST
+		body_orientation = Global.Orientation.EAST
 		ray_cast.target_position = Vector2.RIGHT * RAY_CAST_LENGTH
-	elif body_orientation == Orientation.SOUTH:
+	elif body_orientation == Global.Orientation.SOUTH:
 		animation_player.play("movingWest")
-		body_orientation = Orientation.WEST
+		body_orientation = Global.Orientation.WEST
 		ray_cast.target_position = Vector2.LEFT * RAY_CAST_LENGTH
-	elif body_orientation == Orientation.EAST:
+	elif body_orientation == Global.Orientation.EAST:
 		animation_player.play("movingSouth")
-		body_orientation = Orientation.SOUTH
+		body_orientation = Global.Orientation.SOUTH
 		ray_cast.target_position = Vector2.DOWN * RAY_CAST_LENGTH
 	else:
 		animation_player.play("movingNorth")
-		body_orientation = Orientation.NORTH
+		body_orientation = Global.Orientation.NORTH
 		ray_cast.target_position = Vector2.UP * RAY_CAST_LENGTH
 	animation_player.seek(0.0, true)
 	animation_player.pause()
@@ -203,30 +196,30 @@ func handle_turret() -> void:
 
 
 func rotate_turret_right() -> void:
-	if turret_orientation == Orientation.NORTH:
-		turret_orientation = Orientation.EAST
+	if turret_orientation == Global.Orientation.NORTH:
+		turret_orientation = Global.Orientation.EAST
 		turret_sprite.rotation_degrees = 90.0
-	elif turret_orientation == Orientation.EAST:
-		turret_orientation = Orientation.SOUTH
+	elif turret_orientation == Global.Orientation.EAST:
+		turret_orientation = Global.Orientation.SOUTH
 		turret_sprite.rotation_degrees = 180.0
-	elif turret_orientation == Orientation.SOUTH:
-		turret_orientation = Orientation.WEST
+	elif turret_orientation == Global.Orientation.SOUTH:
+		turret_orientation = Global.Orientation.WEST
 		turret_sprite.rotation_degrees = 270.0
-	elif turret_orientation == Orientation.WEST:
-		turret_orientation = Orientation.NORTH
+	elif turret_orientation == Global.Orientation.WEST:
+		turret_orientation = Global.Orientation.NORTH
 		turret_sprite.rotation_degrees = 0.0
 
 
 func rotate_turret_left() -> void:
-	if turret_orientation == Orientation.NORTH:
-		turret_orientation = Orientation.WEST
+	if turret_orientation == Global.Orientation.NORTH:
+		turret_orientation = Global.Orientation.WEST
 		turret_sprite.rotation_degrees = 270.0
-	elif turret_orientation == Orientation.EAST:
-		turret_orientation = Orientation.NORTH
+	elif turret_orientation == Global.Orientation.EAST:
+		turret_orientation = Global.Orientation.NORTH
 		turret_sprite.rotation_degrees = 0.0
-	elif turret_orientation == Orientation.SOUTH:
-		turret_orientation = Orientation.EAST
+	elif turret_orientation == Global.Orientation.SOUTH:
+		turret_orientation = Global.Orientation.EAST
 		turret_sprite.rotation_degrees = 90.0
-	elif turret_orientation == Orientation.WEST:
-		turret_orientation = Orientation.SOUTH
+	elif turret_orientation == Global.Orientation.WEST:
+		turret_orientation = Global.Orientation.SOUTH
 		turret_sprite.rotation_degrees = 180.0

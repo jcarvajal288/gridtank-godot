@@ -1,7 +1,5 @@
 extends Node2D
 
-const TICKS_PER_CYCLE = 8
-
 @onready var tick_count = 0
 
 func _ready() -> void:
@@ -10,5 +8,5 @@ func _ready() -> void:
 
 func trigger_enemy_updates() -> void:
 	tick_count += 1
-	tick_count %= TICKS_PER_CYCLE
+	tick_count %= 255
 	Global.trigger_update.emit(tick_count)
