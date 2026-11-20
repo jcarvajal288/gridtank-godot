@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://cyfc1pkd45ea2"]
+
+[ext_resource type="Script" uid="uid://dv4eyexgu8sb" path="res://Actors/EnemyTurret/enemy_turret.gd" id="1_at4ci"]
+[ext_resource type="Texture2D" uid="uid://dik6pl0g3lruu" path="res://art/enemy_turret.png" id="1_g55hy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fuhmt"]
+radius = 8.0
+
+[node name="EnemyTurret" type="CharacterBody2D" unique_id=1403130778]
+script = ExtResource("1_at4ci")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=905157278]
+texture = ExtResource("1_g55hy")
+hframes = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1605016326]
+shape = SubResource("CircleShape2D_fuhmt")

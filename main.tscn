@@ -1,11 +1,22 @@
 [gd_scene format=3 uid="uid://df6gwf3cdvhmw"]
 
+[ext_resource type="Script" uid="uid://bj5bucusj427r" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://swh5wjtscoq4" path="res://Levels/TestLevel/TestLevel.tscn" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://5yge46m350vh" path="res://Actors/Tank/Tank.tscn" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://cyfc1pkd45ea2" path="res://Actors/EnemyTurret/EnemyTurret.tscn" id="4_1bvp3"]
 
 [node name="Main" type="Node2D" unique_id=516220782]
+script = ExtResource("1_h2yge")
 
 [node name="TestLevel" parent="." unique_id=170532811 instance=ExtResource("1_ig7tw")]
 
 [node name="Tank" parent="." unique_id=346400834 instance=ExtResource("2_0xm2m")]
 position = Vector2(72, 104)
+
+[node name="TickTimer" type="Timer" parent="." unique_id=1840128110]
+autostart = true
+
+[node name="Enemies" type="Node2D" parent="." unique_id=274946166]
+
+[node name="EnemyTurret" parent="Enemies" unique_id=1403130778 instance=ExtResource("4_1bvp3")]
+position = Vector2(88, 72)
