@@ -15,3 +15,7 @@ hframes = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1605016326]
 shape = SubResource("CircleShape2D_fuhmt")
+
+[node name="RayCast2D" type="RayCast2D" parent="." unique_id=2019605825]
+target_position = Vector2(0, -160)
+collision_mask = 2

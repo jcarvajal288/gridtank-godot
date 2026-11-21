@@ -21,6 +21,7 @@ enum State {
 
 func _ready() -> void:
 	animation_player.pause()	
+	Global.tank_shot.connect(destroy_tank)
 
 
 func get_movement_vector() -> Vector2:
@@ -223,3 +224,7 @@ func rotate_turret_left() -> void:
 	elif turret_orientation == Global.Orientation.WEST:
 		turret_orientation = Global.Orientation.SOUTH
 		turret_sprite.rotation_degrees = 180.0
+
+
+func destroy_tank() -> void:
+	queue_free()
