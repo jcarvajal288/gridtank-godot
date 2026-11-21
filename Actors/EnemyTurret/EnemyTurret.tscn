@@ -7,6 +7,8 @@
 radius = 8.0
 
 [node name="EnemyTurret" type="CharacterBody2D" unique_id=1403130778]
+collision_layer = 4
+collision_mask = 4
 script = ExtResource("1_at4ci")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=905157278]

@@ -7,17 +7,20 @@ const TILE_SIZE = 16
 enum State {
 	IDLE,
 	MOVING,
-	TURNING
+	TURNING,
+	FIRING
 }
 
 @onready var animation_player = $AnimationPlayer
-@onready var ray_cast = $RayCast2D
+@onready var wall_detector = $WallDetector
+@onready var fire_line = $FireLine
 @onready var turret_sprite = $TurretSprite
 
 @onready var destination_tile = global_position
 @onready var body_orientation = Global.Orientation.NORTH
 @onready var turret_orientation = Global.Orientation.NORTH
 @onready var state = State.IDLE
+@onready var previous_state = State.IDLE
 
 func _ready() -> void:
 	animation_player.pause()	
@@ -43,7 +46,12 @@ func _process(_delta: float) -> void:
 
 
 func handle_body(movement_vector: Vector2) -> void:
-	if state == State.IDLE:
+	if Input.is_action_just_pressed("fire"):
+		previous_state = state
+		state = State.FIRING
+	if state == State.FIRING:
+		fire()
+	elif state == State.IDLE:
 		state = handle_idle_state(movement_vector)
 	elif state == State.MOVING:
 		state = handle_moving_state()
@@ -120,19 +128,19 @@ func rotate_left() -> void:
 	if body_orientation == Global.Orientation.NORTH:
 		animation_player.play("movingWest")
 		body_orientation = Global.Orientation.WEST
-		ray_cast.target_position = Vector2.LEFT * RAY_CAST_LENGTH
+		wall_detector.target_position = Vector2.LEFT * RAY_CAST_LENGTH
 	elif body_orientation == Global.Orientation.SOUTH:
 		animation_player.play("movingEast")
 		body_orientation = Global.Orientation.EAST
-		ray_cast.target_position = Vector2.RIGHT * RAY_CAST_LENGTH
+		wall_detector.target_position = Vector2.RIGHT * RAY_CAST_LENGTH
 	elif body_orientation == Global.Orientation.EAST:
 		animation_player.play("movingNorth")
 		body_orientation = Global.Orientation.NORTH
-		ray_cast.target_position = Vector2.UP * RAY_CAST_LENGTH
+		wall_detector.target_position = Vector2.UP * RAY_CAST_LENGTH
 	else:
 		animation_player.play("movingSouth")
 		body_orientation = Global.Orientation.SOUTH
-		ray_cast.target_position = Vector2.DOWN * RAY_CAST_LENGTH
+		wall_detector.target_position = Vector2.DOWN * RAY_CAST_LENGTH
 	animation_player.seek(0.0, true)
 	animation_player.pause()
 	rotate_turret_left()
@@ -142,34 +150,34 @@ func rotate_right() -> void:
 	if body_orientation == Global.Orientation.NORTH:
 		animation_player.play("movingEast")
 		body_orientation = Global.Orientation.EAST
-		ray_cast.target_position = Vector2.RIGHT * RAY_CAST_LENGTH
+		wall_detector.target_position = Vector2.RIGHT * RAY_CAST_LENGTH
 	elif body_orientation == Global.Orientation.SOUTH:
 		animation_player.play("movingWest")
 		body_orientation = Global.Orientation.WEST
-		ray_cast.target_position = Vector2.LEFT * RAY_CAST_LENGTH
+		wall_detector.target_position = Vector2.LEFT * RAY_CAST_LENGTH
 	elif body_orientation == Global.Orientation.EAST:
 		animation_player.play("movingSouth")
 		body_orientation = Global.Orientation.SOUTH
-		ray_cast.target_position = Vector2.DOWN * RAY_CAST_LENGTH
+		wall_detector.target_position = Vector2.DOWN * RAY_CAST_LENGTH
 	else:
 		animation_player.play("movingNorth")
 		body_orientation = Global.Orientation.NORTH
-		ray_cast.target_position = Vector2.UP * RAY_CAST_LENGTH
+		wall_detector.target_position = Vector2.UP * RAY_CAST_LENGTH
 	animation_player.seek(0.0, true)
 	animation_player.pause()
 	rotate_turret_right()
 
 
 func destination_open(movement_vector: Vector2) -> bool:
-	ray_cast.target_position = movement_vector * RAY_CAST_LENGTH
-	return not ray_cast.is_colliding()
+	wall_detector.target_position = movement_vector * RAY_CAST_LENGTH
+	return not wall_detector.is_colliding()
 
 
 func handle_moving_state() -> State:
 	if reached_destination():
 		global_position = destination_tile
 		return State.IDLE
-	elif ray_cast.is_colliding():
+	elif wall_detector.is_colliding():
 		return State.IDLE
 	else:
 		move_and_slide()
@@ -200,31 +208,52 @@ func rotate_turret_right() -> void:
 	if turret_orientation == Global.Orientation.NORTH:
 		turret_orientation = Global.Orientation.EAST
 		turret_sprite.rotation_degrees = 90.0
+		fire_line.rotation_degrees = 90.0
 	elif turret_orientation == Global.Orientation.EAST:
 		turret_orientation = Global.Orientation.SOUTH
 		turret_sprite.rotation_degrees = 180.0
+		fire_line.rotation_degrees = 180.0
 	elif turret_orientation == Global.Orientation.SOUTH:
 		turret_orientation = Global.Orientation.WEST
 		turret_sprite.rotation_degrees = 270.0
+		fire_line.rotation_degrees = 270.0
 	elif turret_orientation == Global.Orientation.WEST:
 		turret_orientation = Global.Orientation.NORTH
 		turret_sprite.rotation_degrees = 0.0
+		fire_line.rotation_degrees = 0.0
 
 
 func rotate_turret_left() -> void:
 	if turret_orientation == Global.Orientation.NORTH:
 		turret_orientation = Global.Orientation.WEST
 		turret_sprite.rotation_degrees = 270.0
+		fire_line.rotation_degrees = 270.0
 	elif turret_orientation == Global.Orientation.EAST:
 		turret_orientation = Global.Orientation.NORTH
 		turret_sprite.rotation_degrees = 0.0
+		fire_line.rotation_degrees = 0.0
 	elif turret_orientation == Global.Orientation.SOUTH:
 		turret_orientation = Global.Orientation.EAST
 		turret_sprite.rotation_degrees = 90.0
+		fire_line.rotation_degrees = 90.0
 	elif turret_orientation == Global.Orientation.WEST:
 		turret_orientation = Global.Orientation.SOUTH
 		turret_sprite.rotation_degrees = 180.0
+		fire_line.rotation_degrees = 180.0
 
 
 func destroy_tank() -> void:
 	queue_free()
+
+
+func fire() -> void:
+	print(previous_state)
+	if not fire_line.enabled:
+		fire_line.enabled = true
+	elif fire_line.is_colliding():
+		var collider = fire_line.get_collider()
+		if is_instance_of(collider, CharacterBody2D):
+			collider.destroy()
+		fire_line.enabled = false
+	else:
+		state = previous_state

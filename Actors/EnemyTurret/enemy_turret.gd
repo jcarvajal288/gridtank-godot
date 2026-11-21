@@ -7,3 +7,7 @@ func _process(_delta: float) -> void:
 		var collider = ray_cast.get_collider()
 		if is_instance_of(collider, Tank):
 			Global.tank_shot.emit()
+
+
+func destroy() -> void:
+	queue_free()
